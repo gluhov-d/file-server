@@ -1,6 +1,8 @@
 package com.github.gluhov.repository.jpa;
 
+import com.github.gluhov.model.Event;
 import com.github.gluhov.model.FileData;
+import com.github.gluhov.model.FileStatus;
 import com.github.gluhov.repository.FileDataRepository;
 import com.github.gluhov.util.DatabaseUtil;
 import jakarta.persistence.Query;
@@ -31,7 +33,8 @@ public class JpaFileDataDataRepository implements FileDataRepository {
             try {
                 FileData fileData = session.get(FileData.class, id);
                 if (fileData != null) {
-                    session.remove(fileData);
+                    fileData.setFileStatus(FileStatus.DELETED);
+                    session.merge(fileData);
                     transaction.commit();
                 }
             } catch (Exception e) {
@@ -79,6 +82,17 @@ public class JpaFileDataDataRepository implements FileDataRepository {
             query.setParameter("id", id);
             Long res = (Long) query.getSingleResult();
             return res == 1;
+        }
+    }
+
+    @Override
+    public Optional<FileData> saveWithEvent(FileData fileData, Event event) {
+        try (Session session = sessionFactory.openSession()){
+            Transaction transaction = session.beginTransaction();
+            session.persist(fileData);
+            session.persist(event);
+            transaction.commit();
+            return Optional.of(fileData);
         }
     }
 }

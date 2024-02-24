@@ -26,5 +26,6 @@ public class User extends BaseEntity {
     private String name;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @EqualsAndHashCode.Exclude
     private Set<Event> events = new HashSet<>();
 }

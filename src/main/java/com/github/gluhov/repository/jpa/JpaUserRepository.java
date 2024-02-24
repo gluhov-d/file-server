@@ -12,6 +12,10 @@ import java.util.List;
 import java.util.Optional;
 
 public class JpaUserRepository implements UserRepository {
+    private final String GET_BY_ID = "SELECT u FROM User u \n" +
+            "LEFT JOIN FETCH u.events e\n" +
+            "LEFT JOIN FETCH e.file f\n" +
+            "WHERE u.id = :id";
     private final String CHECK_EXISTS = "SELECT COUNT(id) FROM User WHERE id = :id";
     private final String FIND_ALL = "SELECT u FROM User u";
     private final SessionFactory sessionFactory = DatabaseUtil.getSessionFactory();
@@ -19,8 +23,7 @@ public class JpaUserRepository implements UserRepository {
     @Override
     public Optional<User> getById(Long id) {
         try (Session session = sessionFactory.openSession()) {
-            User user = session.get(User.class, id);
-            return Optional.ofNullable(user);
+            return Optional.ofNullable(session.createQuery(GET_BY_ID, User.class).setParameter("id", id).getSingleResult());
         }
     }
 

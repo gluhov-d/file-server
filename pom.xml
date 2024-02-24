@@ -6,6 +6,7 @@
 
     <groupId>com.github.gluhov</groupId>
     <artifactId>file-server</artifactId>
+    <packaging>war</packaging>
     <version>1.0.0</version>
     <name>File server</name>
     <description>REST API File server</description>
@@ -15,9 +16,20 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <lombok.version>1.18.30</lombok.version>
+        <maven.war.plugin.version>3.4.0</maven.war.plugin.version>
+        <maven.compiler.plugin.version>3.12.1</maven.compiler.plugin.version>
+        <fileupload2.version>2.0.0-M2</fileupload2.version>
+        <servlet.api.version>6.1.0-M1</servlet.api.version>
+        <jackson.version>2.16.1</jackson.version>
+        <commons.io.version>2.15.1</commons.io.version>
         <!-- db -->
         <mysql.connector.version>8.0.33</mysql.connector.version>
         <flyway.version>10.6.0</flyway.version>
+        <!-- test -->
+        <junit.platform.launcher.version>1.10.1</junit.platform.launcher.version>
+        <junit.jupiter.version>5.10.1</junit.jupiter.version>
+        <surefire.plugin.version>3.2.5</surefire.plugin.version>
+        <mockito.version>5.8.0</mockito.version>
         <!-- hibernate -->
         <hibernate.version>6.4.2.Final</hibernate.version>
         <hibernate.validator.version>8.0.1.Final</hibernate.validator.version>
@@ -43,6 +55,28 @@
             <artifactId>flyway-mysql</artifactId>
             <version>${flyway.version}</version>
         </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons.io.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-fileupload2-jakarta-servlet6</artifactId>
+            <version>${fileupload2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>${servlet.api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
 
         <!-- hibernate -->
         <dependency>
@@ -65,6 +99,58 @@
             <artifactId>expressly</artifactId>
             <version>${javax-el.version}</version>
         </dependency>
+
+        <!-- JUnit -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+            <version>${junit.platform.launcher.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Mockito -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
+    <build>
+        <finalName>FileStorage</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>${maven.war.plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire.plugin.version}</version>
+                <configuration>
+                    <argLine>-Dfile.encoding=UTF-8</argLine>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
 
 </project>

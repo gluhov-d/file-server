@@ -6,7 +6,8 @@ CREATE TABLE Users (
 CREATE TABLE Files (
                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
                        name VARCHAR(255) NOT NULL,
-                       file_path VARCHAR(255) NOT NULL
+                       file_path VARCHAR(255) NOT NULL,
+                       status ENUM('UPLOADED', 'DELETED', 'ARCHIVED', 'AVAILABLE')
 );
 
 CREATE TABLE Events (
