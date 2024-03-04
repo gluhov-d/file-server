@@ -21,5 +21,11 @@ public class Event extends BaseEntity {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "file_id", referencedColumnName = "id")
-    private FileData file;
+    private FileEntity file;
+
+    public Event(Long id, User user, FileEntity file) {
+        super(id);
+        this.user = user;
+        this.file = file;
+    }
 }

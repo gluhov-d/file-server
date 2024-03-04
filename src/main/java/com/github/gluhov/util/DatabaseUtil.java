@@ -1,5 +1,6 @@
 package com.github.gluhov.util;
 
+import lombok.experimental.UtilityClass;
 import org.flywaydb.core.Flyway;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
@@ -10,6 +11,7 @@ import org.hibernate.cfg.Configuration;
 
 import java.util.Properties;
 
+@UtilityClass
 public class DatabaseUtil {
     private static SessionFactory sessionFactory = buildSessionFactory();
 
@@ -35,10 +37,6 @@ public class DatabaseUtil {
 
     public static SessionFactory getSessionFactory() {
         return sessionFactory;
-    }
-
-    public static void shutdown() {
-        getSessionFactory().close();
     }
 
     public static void migrateDatabase() {

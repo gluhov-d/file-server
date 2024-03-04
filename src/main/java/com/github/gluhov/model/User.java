@@ -1,5 +1,6 @@
 package com.github.gluhov.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -22,10 +23,16 @@ import java.util.Set;
 public class User extends BaseEntity {
     @Column(name = "name")
     @NotBlank
-    @Size(min = 2)
+    @Size(min = 2, max = 128)
     private String name;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @EqualsAndHashCode.Exclude
+    @JsonIgnore
     private Set<Event> events = new HashSet<>();
+
+    public User(Long id, String name) {
+        super(id);
+        this.name = name;
+    }
 }

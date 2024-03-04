@@ -1,6 +1,5 @@
 package com.github.gluhov.repository;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface GenericRepository <T, ID> {
@@ -12,8 +11,4 @@ public interface GenericRepository <T, ID> {
     Optional<T> save(T entity);
 
     Optional<T> update(T entity);
-
-    Optional<List<T>> findAll();
-
-    Boolean checkIfExist(ID id);
 }

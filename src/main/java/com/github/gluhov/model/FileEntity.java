@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class FileData extends BaseEntity {
+public class FileEntity extends BaseEntity {
     @Column(name = "name")
     @NotBlank
     @Size(min = 2)
@@ -30,4 +30,11 @@ public class FileData extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private FileStatus fileStatus;
+
+    public FileEntity(Long id, String name, String filePath, FileStatus fileStatus) {
+        super(id);
+        this.name = name;
+        this.filePath = filePath;
+        this.fileStatus = fileStatus;
+    }
 }

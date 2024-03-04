@@ -1,30 +1,34 @@
 package com.github.gluhov.repository.jpa;
 
+import com.github.gluhov.model.Event;
 import com.github.gluhov.model.User;
 import com.github.gluhov.repository.UserRepository;
 import com.github.gluhov.util.DatabaseUtil;
-import jakarta.persistence.Query;
+import jakarta.persistence.EntityGraph;
+import jakarta.persistence.Subgraph;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 public class JpaUserRepository implements UserRepository {
-    private final String GET_BY_ID = "SELECT u FROM User u \n" +
-            "LEFT JOIN FETCH u.events e\n" +
-            "LEFT JOIN FETCH e.file f\n" +
-            "WHERE u.id = :id";
-    private final String CHECK_EXISTS = "SELECT COUNT(id) FROM User WHERE id = :id";
-    private final String FIND_ALL = "SELECT u FROM User u";
     private final SessionFactory sessionFactory = DatabaseUtil.getSessionFactory();
    
     @Override
     public Optional<User> getById(Long id) {
-        try (Session session = sessionFactory.openSession()) {
-            return Optional.ofNullable(session.createQuery(GET_BY_ID, User.class).setParameter("id", id).getSingleResult());
-        }
+        Session session = sessionFactory.getCurrentSession();
+        Transaction transaction = session.getTransaction();
+        if (!transaction.isActive()) session.beginTransaction();
+        EntityGraph<User> graph = session.createEntityGraph(User.class);
+        graph.addAttributeNodes("events");
+        Subgraph<Event> subgraph = graph.addSubgraph("events");
+        subgraph.addAttributeNodes("file");
+        Map<String, Object> options = new HashMap<>();
+        options.put("jakarta.persistence.loadgraph", graph);
+        return Optional.ofNullable(session.find(User.class, id, options));
     }
 
     @Override
@@ -64,23 +68,6 @@ public class JpaUserRepository implements UserRepository {
             User updatedUser = session.merge(user);
             transaction.commit();
             return Optional.of(updatedUser);
-        }
-    }
-
-    @Override
-    public Optional<List<User>> findAll() {
-        try (Session session = sessionFactory.openSession()) {
-            return Optional.ofNullable(session.createQuery(FIND_ALL, User.class).getResultList());
-        }
-    }
-
-    @Override
-    public Boolean checkIfExist(Long id) {
-        try (Session session = sessionFactory.openSession()) {
-            Query query = session.createQuery(CHECK_EXISTS, Long.class);
-            query.setParameter("id", id);
-            Long res = (Long) query.getSingleResult();
-            return res == 1;
         }
     }
 }

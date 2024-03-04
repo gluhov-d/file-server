@@ -1,7 +1,8 @@
 package com.github.gluhov.repository.jpa;
 
-import com.github.gluhov.model.Event;
-import com.github.gluhov.repository.EventRepository;
+import com.github.gluhov.model.FileEntity;
+import com.github.gluhov.model.FileStatus;
+import com.github.gluhov.repository.FileEntityRepository;
 import com.github.gluhov.util.DatabaseUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -9,14 +10,14 @@ import org.hibernate.Transaction;
 
 import java.util.Optional;
 
-public class JpaEventRepository implements EventRepository {
+public class JpaFileEntityRepository implements FileEntityRepository {
     private final SessionFactory sessionFactory = DatabaseUtil.getSessionFactory();
 
     @Override
-    public Optional<Event> getById(Long id) {
+    public Optional<FileEntity> getById(Long id) {
         try (Session session = sessionFactory.openSession()) {
-            Event event = session.get(Event.class, id);
-            return Optional.ofNullable(event);
+            FileEntity fileEntity = session.get(FileEntity.class, id);
+            return Optional.ofNullable(fileEntity);
         }
     }
 
@@ -25,35 +26,37 @@ public class JpaEventRepository implements EventRepository {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
             try {
-                Event event = session.get(Event.class, id);
-                if (event != null) {
-                    session.remove(event);
+                FileEntity fileEntity = session.get(FileEntity.class, id);
+                if (fileEntity != null) {
+                    fileEntity.setFileStatus(FileStatus.DELETED);
+                    session.merge(fileEntity);
                     transaction.commit();
                 }
             } catch (Exception e) {
                 if (transaction != null) {
                     transaction.rollback();
                 }
-                System.out.println("Failed to delete file upload event.");
+                System.out.println("Failed to delete file data.");
                 e.printStackTrace();
             }
         }
+
     }
 
     @Override
-    public Optional<Event> save(Event event) {
+    public Optional<FileEntity> save(FileEntity fileEntity) {
         Session session = sessionFactory.getCurrentSession();
-        session.persist(event);
-        return Optional.of(event);
+        session.persist(fileEntity);
+        return Optional.of(fileEntity);
     }
 
     @Override
-    public Optional<Event> update(Event event) {
+    public Optional<FileEntity> update(FileEntity fileEntity) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            Event updatedEvent = session.merge(event);
+            FileEntity updatedFileEntity = session.merge(fileEntity);
             transaction.commit();
-            return Optional.of(updatedEvent);
+            return Optional.of(updatedFileEntity);
         }
     }
 }
