@@ -45,7 +45,7 @@ public class JpaFileEntityRepository implements FileEntityRepository {
 
     @Override
     public Optional<FileEntity> save(FileEntity fileEntity) {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = sessionFactory.openSession();
         session.persist(fileEntity);
         return Optional.of(fileEntity);
     }

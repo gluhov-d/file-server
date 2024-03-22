@@ -19,9 +19,7 @@ public class JpaUserRepository implements UserRepository {
    
     @Override
     public Optional<User> getById(Long id) {
-        Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = session.getTransaction();
-        if (!transaction.isActive()) session.beginTransaction();
+        Session session = sessionFactory.openSession();
         EntityGraph<User> graph = session.createEntityGraph(User.class);
         graph.addAttributeNodes("events");
         Subgraph<Event> subgraph = graph.addSubgraph("events");

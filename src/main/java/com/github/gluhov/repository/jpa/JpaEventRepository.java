@@ -42,9 +42,7 @@ public class JpaEventRepository implements EventRepository {
 
     @Override
     public Optional<Event> save(Event event) {
-        Session session = sessionFactory.getCurrentSession();
-        session.persist(event);
-        return Optional.of(event);
+        throw new RuntimeException("Saving event exception");
     }
 
     @Override

@@ -3,8 +3,10 @@ package com.github.gluhov.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.fileupload2.core.DiskFileItem;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.OptionalLong;
 
 public class ServletUtil {
@@ -29,5 +31,14 @@ public class ServletUtil {
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(object);
         resp.getWriter().write(json);
+    }
+
+    public static OptionalLong getUserIdFromFormItems(List<DiskFileItem> formItems) {
+        for (DiskFileItem item : formItems) {
+            if (item.isFormField() && item.getFieldName().equals("userId")) {
+                return OptionalLong.of(Long.parseLong(item.getString()));
+            }
+        }
+        return OptionalLong.empty();
     }
 }
